@@ -1,7 +1,7 @@
 import cv2
 
 mc = cv2.CascadeClassifier("Mouth.xml")
-image = cv2.imread("img/sad.jpg")
+image = cv2.imread("img/sadface.jpg")
 
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 

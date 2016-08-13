@@ -1,4 +1,5 @@
 import os
+import cv2
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 
 app = Flask(__name__)
@@ -17,6 +18,25 @@ def upload():
 	if file and allowed_file(file.filename):
 		filename = file.filename
 		file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+		
+		mc = cv2.CascadeClassifier("Mouth.xml")
+		image = cv2.imread("img/sadface.jpg")
+
+		gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+		mouths = mc.detectMultiScale(
+                	gray,
+                	scaleFactor = 1.1,
+                	minNeighbors = 5,
+               		minSize = (100, 20),
+                	flags = cv2.CASCADE_SCALE_IMAGE
+		)
+
+		for (x, y, w, h) in mouths:
+        		cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
+
+		cv2.imwrite("img/newsad.jpg", image)		
+
 		return redirect(url_for('uploaded_file', filename=filename))
 
 @app.route('/uploads/<filename>')
